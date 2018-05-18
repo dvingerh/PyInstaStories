@@ -5,6 +5,7 @@ import sys
 import codecs
 import json
 import argparse
+import datetime
 
 try:
     import urllib.request as urllib
@@ -42,8 +43,8 @@ def to_json(python_object):
 
 
 def from_json(json_object):
-	if '__class__' in json_object and json_object['__class__'] == 'bytes':
-		return codecs.decode(json_object['__value__'].encode(), 'base64')
+	if '__class__' in json_object and json_object.get('__class__') == 'bytes':
+		return codecs.decode(json_object.get('__value__').encode(), 'base64')
 	return json_object
 
 
@@ -51,13 +52,12 @@ def onlogin_callback(api, settings_file):
 	cache_settings = api.settings
 	with open(settings_file, 'w') as outfile:
 		json.dump(cache_settings, outfile, default=to_json)
-		print('[I] New auth cookie file was made: {0!s}'.format(settings_file)	)
+		print('[I] New auth cookie file was made: {0!s}'.format(settings_file))
 
 
 def login(username, password):
 	device_id = None
 	try:
-		
 		settings_file = "credentials.json"
 		if not os.path.isfile(settings_file):
 			# settings file does not exist
@@ -70,7 +70,6 @@ def login(username, password):
 		else:
 			with open(settings_file) as file_data:
 				cached_settings = json.load(file_data, object_hook=from_json)
-			# print('[I] Using settings file: {0!s}'.format(settings_file))
 
 			device_id = cached_settings.get('device_id')
 			# reuse auth settings
@@ -86,22 +85,26 @@ def login(username, password):
 		api = Client(
 			username, password,
 			device_id=device_id,
-			on_login=lambda x: onlogin_callback(x, settings))
+			on_login=lambda x: onlogin_callback(x, settings_file))
 
 	except ClientLoginError as e:
-		print('[E] ClientLoginError: {0!s}'.format(e))
+		print('[E] Could not login: {:s}.\n[E] {:s}\n\n{:s}'.format(json.loads(e.error_response).get("error_title", "Error title not available."), json.loads(e.error_response).get("message", "Not available"), e.error_response))
 		sys.exit(9)
 	except ClientError as e:
-		print('[E] ClientError: {0!s}'.format(e))
+		print('[E] Client Error: {0!s}\n[E] Message: {1!s}\n[E] Code: {2:d}\n\n[E] Full response:\n{3!s}\n'.format(e.msg, json.loads(e.error_response).get("message", "Additional error information not available."), e.code, e.error_response))
 		sys.exit(9)
 	except Exception as e:
-		print('[E] Unexpected Exception: {0!s}'.format(e))
+		if (str(e).startswith("unsupported pickle protocol")):
+			print("[W] This cookie file is not compatible with Python {}.".format(sys.version.split(' ')[0][0]))
+			print("[W] Please delete your cookie file 'credentials.json' and try again.")
+		else:
+			print('[E] Unexpected Exception: {0!s}'.format(e))
 		sys.exit(99)
 
-	# Show when login expires
-	# cookie_expiry = api.cookie_jar.expires_earliest
-	# print('[I] Cookie Expiry: {0!s}'.format(datetime.datetime.fromtimestamp(cookie_expiry).strftime('%Y-%m-%dT%H:%M:%S')), "WHITE")
-	print('[I] Login to "' + username + '" OK!')
+	print('[I] Using cached login cookie for "' + api.authenticated_user_name + '".')
+	cookie_expiry = api.cookie_jar.expires_earliest
+	print('[I] Login cookie expiry date: {0!s}'.format(datetime.datetime.fromtimestamp(cookie_expiry).strftime('%Y-%m-%d at %I:%M:%S %p')))
+
 	return api
 
 
