@@ -1,11 +1,16 @@
 import threading
 import time
-import urllib
 import os
 import sys
 import codecs
 import json
 import argparse
+
+try:
+    import urllib.request as urllib
+except ImportError:
+    import urllib as urllib	
+
 try:
 	from instagram_private_api import (
 		Client, ClientError, ClientLoginError,
