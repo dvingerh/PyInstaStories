@@ -6,7 +6,7 @@ CLI script to download Instagram stories from a given user. Supports Python 2.7 
 
 Make sure you have the following dependency installed: https://github.com/ping/instagram_private_api
 
-Required arguments are `--username`, `--password` and `--download`.
+Available arguments are `--username`, `--password` and `--download`, but you can omit `--username`, `--password` if there is a login cookie file available already.
 
 ### Example
 

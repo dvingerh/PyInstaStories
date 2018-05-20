@@ -30,8 +30,8 @@ from instagram_private_api import ClientError
 from instagram_private_api import ClientThrottledError
 from instagram_private_api import Client, ClientCompatPatch
 
-
-
+script_version = "1.1"
+python_version = sys.version.split(' ')[0]
 
 ##Login
 
@@ -55,7 +55,7 @@ def onlogin_callback(api, settings_file):
 		print('[I] New auth cookie file was made: {0!s}'.format(settings_file))
 
 
-def login(username, password):
+def login(username="", password=""):
 	device_id = None
 	try:
 		settings_file = "credentials.json"
@@ -82,10 +82,14 @@ def login(username, password):
 
 		# Login expired
 		# Do relogin but use default ua, keys and such
-		api = Client(
-			username, password,
-			device_id=device_id,
-			on_login=lambda x: onlogin_callback(x, settings_file))
+		if (username != "" and password != ""):
+			api = Client(
+				username, password,
+				device_id=device_id,
+				on_login=lambda x: onlogin_callback(x, settings_file))
+		else:
+			print("[E] The login cookie has expired, but no login arguments were given.")
+			print("[E] Please supply --username and --password arguments.")
 
 	except ClientLoginError as e:
 		print('[E] Could not login: {:s}.\n[E] {:s}\n\n{:s}'.format(json.loads(e.error_response).get("error_title", "Error title not available."), json.loads(e.error_response).get("message", "Not available"), e.error_response))
@@ -102,6 +106,7 @@ def login(username, password):
 		sys.exit(99)
 
 	print('[I] Using cached login cookie for "' + api.authenticated_user_name + '".')
+	print('[I] Login to "' + api.authenticated_user_name + '" OK!')
 	cookie_expiry = api.cookie_jar.expires_earliest
 	print('[I] Login cookie expiry date: {0!s}'.format(datetime.datetime.fromtimestamp(cookie_expiry).strftime('%Y-%m-%d at %I:%M:%S %p')))
 
@@ -195,6 +200,7 @@ def get_media_story(user_id):
 			print('-' * 50)
 			print("Story downloading ended with no new media found.")
 			print('-' * 50)
+		exit(0)
 	except Exception as e:
 		print("[E] An error occurred: " + str(e))
 		exit(1)
@@ -202,9 +208,14 @@ def get_media_story(user_id):
 		print("[I] User aborted download.")
 		exit(1)		
 
+
+print("-" * 70)
+print('PYINSTASTORIES (SCRIPT V{:s} - PYTHON V{:s}) - {:s}'.format(script_version, python_version, time.strftime('%I:%M:%S %p')))
+print("-" * 70)
+
 parser = argparse.ArgumentParser()
-parser.add_argument('-u', '--username', dest='username', type=str, required=True, help="Instagram username to login with.")
-parser.add_argument('-p', '--password', dest='password', type=str, required=True, help="Instagram password to login with.")
+parser.add_argument('-u', '--username', dest='username', type=str, required=False, help="Instagram username to login with.")
+parser.add_argument('-p', '--password', dest='password', type=str, required=False, help="Instagram password to login with.")
 parser.add_argument('-d', '--download', dest='download', type=str, required=True, help="Instagram user to download stories from.")
 
 # Workaround to 'disable' argument abbreviations
@@ -218,8 +229,14 @@ if (args.username and args.password and args.download):
 	user_to_check = args.download
 	ig_client = login(args.username, args.password)
 else:
-	print("[E] Not all arguments (--username, --password, --download) were supplied.")
-	exit(1)
+	settings_file = "credentials.json"
+	if not os.path.isfile(settings_file):
+		print("[E] No username/password provided, but there is no login cookie present either.")
+		print("[E] Please supply --username and --password arguments.")
+		exit(1)
+	else:
+		user_to_check = args.download
+		ig_client = login()
 
 
 if check_directories():
