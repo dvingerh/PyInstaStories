@@ -11,9 +11,13 @@ Available arguments are `--username`, `--password` and `--download`, but you can
 ### Example
 
 ```
-> python pyinstastories.py -u johndoe -p grapefruits -d jacobsartorius
-
+> python3 pyinstastories.py -d "jacobsartorius"
+----------------------------------------------------------------------
+PYINSTASTORIES (SCRIPT V1.1 - PYTHON V3.6.3) - 07:46:43 PM
+----------------------------------------------------------------------
+[I] Using cached login cookie for "johndoe".
 [I] Login to "johndoe" OK!
+[I] Login cookie expiry date: 2018-05-27 at 04:40:56 PM
 --------------------------------------------------
 Getting stories for user 'jacobsartorius' ...
 --------------------------------------------------
