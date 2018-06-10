@@ -30,7 +30,7 @@ from instagram_private_api import ClientError
 from instagram_private_api import ClientThrottledError
 from instagram_private_api import Client, ClientCompatPatch
 
-script_version = "1.1"
+script_version = "1.2"
 python_version = sys.version.split(' ')[0]
 
 ##Login
@@ -107,7 +107,7 @@ def login(username="", password=""):
 
 	print('[I] Using cached login cookie for "' + api.authenticated_user_name + '".')
 	print('[I] Login to "' + api.authenticated_user_name + '" OK!')
-	cookie_expiry = api.cookie_jar.expires_earliest
+	cookie_expiry = api.cookie_jar.auth_expires
 	print('[I] Login cookie expiry date: {0!s}'.format(datetime.datetime.fromtimestamp(cookie_expiry).strftime('%Y-%m-%d at %I:%M:%S %p')))
 
 	return api
@@ -131,9 +131,9 @@ def check_directories():
 
 def get_media_story(user_id):
 	try:
-		print('-' * 50)
+		print('-' * 70)
 		print("Getting stories for user '" + user_to_check + "' ...")
-		print('-' * 50)
+		print('-' * 70)
 
 		try:
 			feed = ig_client.user_story_feed(user_id)
@@ -145,9 +145,9 @@ def get_media_story(user_id):
 			feed_json = feed['reel']['items']
 		except TypeError as e:
 			print("There are no recent stories to process, skipping ...")
-			print('-' * 50)
+			print('-' * 70)
 			print("Story updating ended.")
-			print('-' * 50)
+			print('-' * 70)
 			return
 
 		list_video = []
@@ -193,13 +193,13 @@ def get_media_story(user_id):
 				print("[I] skipping '" + filename + "' because it already exists")
 
 		if (len(list_image_new) != 0) or (len(list_video_new) != 0):
-			print('-' * 50)
+			print('-' * 70)
 			print("[I] Story downloading ended with " + str(len(list_image_new)) + " new images and " + str(len(list_video_new)) + " new videos downloaded.")
-			print('-' * 50)
+			print('-' * 70)
 		else:
-			print('-' * 50)
+			print('-' * 70)
 			print("Story downloading ended with no new media found.")
-			print('-' * 50)
+			print('-' * 70)
 		exit(0)
 	except Exception as e:
 		print("[E] An error occurred: " + str(e))
