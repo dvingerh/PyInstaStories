@@ -13,7 +13,7 @@ Available arguments are `--username`, `--password` and `--download`, but you can
 ```
 > python3 pyinstastories.py -d "jacobsartorius"
 ----------------------------------------------------------------------
-PYINSTASTORIES (SCRIPT V1.1 - PYTHON V3.6.3) - 07:46:43 PM
+PYINSTASTORIES (SCRIPT V1.2 - PYTHON V3.6.3) - 07:46:43 PM
 ----------------------------------------------------------------------
 [I] Using cached login cookie for "johndoe".
 [I] Login to "johndoe" OK!
