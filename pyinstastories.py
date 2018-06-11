@@ -30,7 +30,7 @@ from instagram_private_api import ClientError
 from instagram_private_api import ClientThrottledError
 from instagram_private_api import Client, ClientCompatPatch
 
-script_version = "1.2"
+script_version = "1.3"
 python_version = sys.version.split(' ')[0]
 
 ##Login
