@@ -200,7 +200,6 @@ def get_media_story(user_id):
 			print('-' * 70)
 			print("Story downloading ended with no new media found.")
 			print('-' * 70)
-		exit(0)
 	except Exception as e:
 		print("[E] An error occurred: " + str(e))
 		exit(1)
@@ -214,9 +213,9 @@ print('PYINSTASTORIES (SCRIPT V{:s} - PYTHON V{:s}) - {:s}'.format(script_versio
 print("-" * 70)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-u', '--username', dest='username', type=str, required=False, help="Instagram username to login with.")
-parser.add_argument('-p', '--password', dest='password', type=str, required=False, help="Instagram password to login with.")
-parser.add_argument('-d', '--download', dest='download', type=str, required=True, help="Instagram user to download stories from.")
+parser.add_argument('-u', '--username',            dest='username', type=str, required=False, help="Instagram username to login with.")
+parser.add_argument('-p', '--password',            dest='password', type=str, required=False, help="Instagram password to login with.")
+parser.add_argument('-d', '--download', nargs='+', dest='download', type=str, required=True,  help="Instagram user to download stories from.")
 
 # Workaround to 'disable' argument abbreviations
 parser.add_argument('--usernamx', help=argparse.SUPPRESS, metavar='IGNORE')
@@ -226,7 +225,7 @@ parser.add_argument('--downloax', help=argparse.SUPPRESS, metavar='IGNORE')
 args, unknown = parser.parse_known_args()
 
 if (args.username and args.password and args.download):
-	user_to_check = args.download
+	users_to_check = args.download
 	ig_client = login(args.username, args.password)
 else:
 	settings_file = "credentials.json"
@@ -235,17 +234,21 @@ else:
 		print("[E] Please supply --username and --password arguments.")
 		exit(1)
 	else:
-		user_to_check = args.download
+		users_to_check = args.download
 		ig_client = login()
 
 
-if check_directories():
-	try:
-		user_res = ig_client.username_info(args.download)
-		user_id = user_res['user']['pk']
-		get_media_story(user_id)
-	except Exception as e:
-		print("[E] An error occurred: " + str(e))
-else:
-	print("[E] Could not make required directories.\nPlease create a 'stories' folder manually.")
-	exit(1)
+for user_to_check in users_to_check:
+	if check_directories():
+		try:
+			user_res = ig_client.username_info(user_to_check)
+			user_id = user_res['user']['pk']
+			get_media_story(user_id)
+		except Exception as e:
+			print("[E] An error occurred: " + str(e))
+			exit(1)
+	else:
+		print("[E] Could not make required directories.\nPlease create a 'stories' folder manually.")
+		exit(1)
+
+exit(0)
