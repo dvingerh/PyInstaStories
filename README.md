@@ -1,5 +1,5 @@
 # PyInstaStories
-CLI script to download Instagram stories from a given user. Supports Python 2.7 and 3.5.
+CLI script to download Instagram stories from a single user or multiple users at once. Supports Python 2.7 and 3.5.
 
 
 # How to use
@@ -8,12 +8,16 @@ Make sure you have the following dependency installed: https://github.com/ping/i
 
 Available arguments are `--username`, `--password` and `--download`, but you can omit `--username`, `--password` if there is a login cookie file available already.
 
+The `--download` argument supports multiple users, each user is seperated by a space.
+
+Example: `python3 pyinstastories.py -d jacobsartorius justinbieber lilhankwilliams`
+
 ### Example
 
 ```
-> python3 pyinstastories.py -d "jacobsartorius"
+> python3 pyinstastories.py -d jacobsartorius
 ----------------------------------------------------------------------
-PYINSTASTORIES (SCRIPT V1.2 - PYTHON V3.6.3) - 07:46:43 PM
+PYINSTASTORIES (SCRIPT V1.3 - PYTHON V3.6.3) - 07:46:43 PM
 ----------------------------------------------------------------------
 [I] Using cached login cookie for "johndoe".
 [I] Login to "johndoe" OK!
