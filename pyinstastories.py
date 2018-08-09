@@ -30,7 +30,7 @@ from instagram_private_api import ClientError
 from instagram_private_api import ClientThrottledError
 from instagram_private_api import Client, ClientCompatPatch
 
-script_version = "1.3"
+script_version = "1.4"
 python_version = sys.version.split(' ')[0]
 
 ##Login
@@ -117,10 +117,8 @@ def login(username="", password=""):
 
 ##Downloader
 
-global user_to_check
-global ig_client
 
-def check_directories():
+def check_directories(user_to_check):
 	try:
 		if not os.path.isdir(os.getcwd() + "/stories/{}/".format(user_to_check)):
 			os.makedirs(os.getcwd() + "/stories/{}/".format(user_to_check))
@@ -129,25 +127,18 @@ def check_directories():
 		return False
 
 
-def get_media_story(user_id):
+def get_media_story(user_to_check, user_id, ig_client):
 	try:
-		print('-' * 70)
-		print("Getting stories for user '" + user_to_check + "' ...")
-		print('-' * 70)
-
 		try:
 			feed = ig_client.user_story_feed(user_id)
 		except Exception as e:
-			print("An error occurred: " + str(e))
+			print("[W] An error occurred: " + str(e))
 			exit(1)
 
 		try:
 			feed_json = feed['reel']['items']
 		except TypeError as e:
-			print("There are no recent stories to process, skipping ...")
-			print('-' * 70)
-			print("Story updating ended.")
-			print('-' * 70)
+			print("[I] There are no recent stories to process for this user.")
 			return
 
 		list_video = []
@@ -167,39 +158,37 @@ def get_media_story(user_id):
 			final_filename = filename.split('.')[0] + ".mp4"
 			save_path =  os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
 			if not os.path.exists(save_path):
-				print ("[I] Downloading video into " + save_path)
+				print ("[I] Downloading video: {:s}".format(final_filename))
 				try:
 					urllib.URLopener().retrieve(video, save_path)
 					list_video_new.append(save_path)
 				except Exception as e:
-					print("An error occurred: " + str(e))
+					print("[W] An error occurred: " + str(e))
 					exit(1)
 			else:
-				print("[I] skipping '" + filename + "' because it already exists")
+				print("[I] Story already exists: {:s}".format(final_filename))
 
 		for image in list_image:
 			filename = (image.split('/')[-1]).split('?', 1)[0]
 			final_filename = filename.split('.')[0] + ".jpg"
 			save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
 			if not os.path.exists(save_path):
-				print ("[I] Downloading image into " + save_path)
+				print ("[I] Downloading image: {:s}".format(final_filename))
 				try:
 					urllib.URLopener().retrieve(image, save_path)
 					list_image_new.append(save_path)
 				except Exception as e:
-					print("An error occurred: " + str(e))
+					print("[W] An error occurred: " + str(e))
 					exit(1)
 			else:
-				print("[I] skipping '" + filename + "' because it already exists")
+				print("[I] Story already exists: {:s}".format(final_filename))
 
 		if (len(list_image_new) != 0) or (len(list_video_new) != 0):
 			print('-' * 70)
 			print("[I] Story downloading ended with " + str(len(list_image_new)) + " new images and " + str(len(list_video_new)) + " new videos downloaded.")
-			print('-' * 70)
 		else:
 			print('-' * 70)
-			print("Story downloading ended with no new media found.")
-			print('-' * 70)
+			print("[I] No new stories were downloaded.")
 	except Exception as e:
 		print("[E] An error occurred: " + str(e))
 		exit(1)
@@ -208,47 +197,56 @@ def get_media_story(user_id):
 		exit(1)		
 
 
-print("-" * 70)
-print('PYINSTASTORIES (SCRIPT V{:s} - PYTHON V{:s}) - {:s}'.format(script_version, python_version, time.strftime('%I:%M:%S %p')))
-print("-" * 70)
+def start():
+	print("-" * 70)
+	print('[I] PYINSTASTORIES (SCRIPT V{:s} - PYTHON V{:s}) - {:s}'.format(script_version, python_version, time.strftime('%I:%M:%S %p')))
+	print("-" * 70)
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-u', '--username',            dest='username', type=str, required=False, help="Instagram username to login with.")
-parser.add_argument('-p', '--password',            dest='password', type=str, required=False, help="Instagram password to login with.")
-parser.add_argument('-d', '--download', nargs='+', dest='download', type=str, required=True,  help="Instagram user to download stories from.")
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-u', '--username',            dest='username', type=str, required=False, help="Instagram username to login with.")
+	parser.add_argument('-p', '--password',            dest='password', type=str, required=False, help="Instagram password to login with.")
+	parser.add_argument('-d', '--download', nargs='+', dest='download', type=str, required=True,  help="Instagram user to download stories from.")
 
-# Workaround to 'disable' argument abbreviations
-parser.add_argument('--usernamx', help=argparse.SUPPRESS, metavar='IGNORE')
-parser.add_argument('--passworx', help=argparse.SUPPRESS, metavar='IGNORE')
-parser.add_argument('--downloax', help=argparse.SUPPRESS, metavar='IGNORE')
+	# Workaround to 'disable' argument abbreviations
+	parser.add_argument('--usernamx', help=argparse.SUPPRESS, metavar='IGNORE')
+	parser.add_argument('--passworx', help=argparse.SUPPRESS, metavar='IGNORE')
+	parser.add_argument('--downloax', help=argparse.SUPPRESS, metavar='IGNORE')
 
-args, unknown = parser.parse_known_args()
+	args, unknown = parser.parse_known_args()
 
-if (args.username and args.password and args.download):
-	users_to_check = args.download
-	ig_client = login(args.username, args.password)
-else:
-	settings_file = "credentials.json"
-	if not os.path.isfile(settings_file):
-		print("[E] No username/password provided, but there is no login cookie present either.")
-		print("[E] Please supply --username and --password arguments.")
-		exit(1)
-	else:
+	if (args.username and args.password and args.download):
 		users_to_check = args.download
-		ig_client = login()
-
-
-for user_to_check in users_to_check:
-	if check_directories():
-		try:
-			user_res = ig_client.username_info(user_to_check)
-			user_id = user_res['user']['pk']
-			get_media_story(user_id)
-		except Exception as e:
-			print("[E] An error occurred: " + str(e))
-			exit(1)
+		ig_client = login(args.username, args.password)
 	else:
-		print("[E] Could not make required directories.\nPlease create a 'stories' folder manually.")
-		exit(1)
+		settings_file = "credentials.json"
+		if not os.path.isfile(settings_file):
+			print("[E] No username/password provided, but there is no login cookie present either.")
+			print("[E] Please supply --username and --password arguments.")
+			exit(1)
+		else:
+			users_to_check = args.download
+			ig_client = login()
 
-exit(0)
+	print("-" * 70)
+	print("[I] Files will be downloaded to {:s}".format(os.getcwd()))
+	print("-" * 70)
+
+	for index, user_to_check in enumerate(users_to_check):
+		print("[I] Getting stories for user: {:s}".format(user_to_check))
+		print('-' * 70)
+		if check_directories(user_to_check):
+			try:
+				user_res = ig_client.username_info(user_to_check)
+				user_id = user_res['user']['pk']
+				get_media_story(user_to_check, user_id, ig_client)
+			except Exception as e:
+				print("[E] An error occurred: " + str(e))
+				exit(1)
+		else:
+			print("[E] Could not make required directories.\nPlease create a 'stories' folder manually.")
+			exit(1)
+		print('-' * 70)
+
+	exit(0)
+
+start()

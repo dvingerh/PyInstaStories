@@ -15,28 +15,26 @@ Example: `python3 pyinstastories.py -d jacobsartorius justinbieber lilhankwillia
 ### Example
 
 ```
-> python3 pyinstastories.py -d jacobsartorius
+> python3 pyinstastories.py -d jordynjones
 ----------------------------------------------------------------------
-PYINSTASTORIES (SCRIPT V1.3 - PYTHON V3.6.3) - 07:46:43 PM
+PYINSTASTORIES (SCRIPT V1.4 - PYTHON V3.6.3) - 01:16:38 AM
 ----------------------------------------------------------------------
 [I] Using cached login cookie for "johndoe".
 [I] Login to "johndoe" OK!
-[I] Login cookie expiry date: 2018-05-27 at 04:40:56 PM
---------------------------------------------------
-Getting stories for user 'jacobsartorius' ...
---------------------------------------------------
-[I] Downloading video into C:\Users\User\Desktop\stories/stories/jacobsartorius/32275618_1651418691639843_511834982014950862_n.mp4
-[I] Downloading video into C:\Users\User\Desktop\stories/stories/jacobsartorius/32517291_189849734891972_4663753825336221593_n.mp4
-[I] Downloading video into C:\Users\User\Desktop\stories/stories/jacobsartorius/32655179_2207753162587548_6278569131428248597_n.mp4
-[I] Downloading video into C:\Users\User\Desktop\stories/stories/jacobsartorius/32077783_2038028266523708_6160051017498413051_n.mp4
-[I] Downloading image into C:\Users\User\Desktop\stories/stories/jacobsartorius/32203303_219425121987636_9162122599168212992_n.jpg
-[I] Downloading image into C:\Users\User\Desktop\stories/stories/jacobsartorius/31680625_198319374134675_4153861316630544384_n.jpg
-[I] Downloading image into C:\Users\User\Desktop\stories/stories/jacobsartorius/31694915_109540646593804_7825875401988636672_n.jpg
-[I] Downloading image into C:\Users\User\Desktop\stories/stories/jacobsartorius/31888449_858885097632840_6208524751359442944_n.jpg
-[I] Downloading image into C:\Users\User\Desktop\stories/stories/jacobsartorius/32377364_1784230578311096_1660142371871916032_n.jpg
-[I] Downloading image into C:\Users\User\Desktop\stories/stories/jacobsartorius/32078859_381414955677912_3314394217572204544_n.jpg
-[I] Downloading image into C:\Users\User\Desktop\stories/stories/jacobsartorius/32362287_637168276623962_5935568322589360128_n.jpg
---------------------------------------------------
-[I] Story downloading ended with 7 new images and 4 new videos downloaded.
---------------------------------------------------
+[I] Login cookie expiry date: 2018-08-18 at 04:40:56 PM
+----------------------------------------------------------------------
+[I] Files will be downloaded to C:\Users\User\Documents\Git\PyInstaStories
+----------------------------------------------------------------------
+[I] Getting stories for user: jordynjones
+----------------------------------------------------------------------
+[I] Downloading video: 37813815_215083095840615_4630133302956493383_n.mp4
+[I] Downloading image: 38066226_439347253244259_7841321044982890496_n.jpg
+[I] Downloading image: 38541931_272408410204408_6934439177173860352_n.jpg
+[I] Downloading image: 38166262_230879184287581_2338295584533774336_n.jpg
+[I] Downloading image: 38752915_246521029518941_7519825270950330368_n.jpg
+[I] Downloading image: 38052809_2182358915374391_4548264508405055488_n.jpg
+[I] Downloading image: 38080828_530212454075962_3213326425847234560_n.jpg
+----------------------------------------------------------------------
+[I] Story downloading ended with 6 new images and 1 new videos downloaded.
+----------------------------------------------------------------------
 ```
