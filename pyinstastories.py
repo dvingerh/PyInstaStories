@@ -30,7 +30,7 @@ from instagram_private_api import ClientError
 from instagram_private_api import ClientThrottledError
 from instagram_private_api import Client, ClientCompatPatch
 
-script_version = "1.4"
+script_version = "1.5"
 python_version = sys.version.split(' ')[0]
 
 ##Login
@@ -90,12 +90,16 @@ def login(username="", password=""):
 		else:
 			print("[E] The login cookie has expired, but no login arguments were given.")
 			print("[E] Please supply --username and --password arguments.")
+			print('-' * 70)
+			sys.exit(0)
 
 	except ClientLoginError as e:
 		print('[E] Could not login: {:s}.\n[E] {:s}\n\n{:s}'.format(json.loads(e.error_response).get("error_title", "Error title not available."), json.loads(e.error_response).get("message", "Not available"), e.error_response))
+		print('-' * 70)
 		sys.exit(9)
 	except ClientError as e:
 		print('[E] Client Error: {0!s}\n[E] Message: {1!s}\n[E] Code: {2:d}\n\n[E] Full response:\n{3!s}\n'.format(e.msg, json.loads(e.error_response).get("message", "Additional error information not available."), e.code, e.error_response))
+		print('-' * 70)
 		sys.exit(9)
 	except Exception as e:
 		if (str(e).startswith("unsupported pickle protocol")):
@@ -103,6 +107,7 @@ def login(username="", password=""):
 			print("[W] Please delete your cookie file 'credentials.json' and try again.")
 		else:
 			print('[E] Unexpected Exception: {0!s}'.format(e))
+		print('-' * 70)
 		sys.exit(99)
 
 	print('[I] Using cached login cookie for "' + api.authenticated_user_name + '".')
