@@ -77,6 +77,9 @@ def login(username="", password=""):
 				username, password,
 				settings=cached_settings)
 
+			print('[I] Using cached login cookie for "' + api.authenticated_user_name + '".')
+
+
 	except (ClientCookieExpiredError, ClientLoginRequiredError) as e:
 		print('[E] ClientCookieExpiredError/ClientLoginRequiredError: {0!s}'.format(e))
 
@@ -110,7 +113,6 @@ def login(username="", password=""):
 		print('-' * 70)
 		sys.exit(99)
 
-	print('[I] Using cached login cookie for "' + api.authenticated_user_name + '".')
 	print('[I] Login to "' + api.authenticated_user_name + '" OK!')
 	cookie_expiry = api.cookie_jar.auth_expires
 	print('[I] Login cookie expiry date: {0!s}'.format(datetime.datetime.fromtimestamp(cookie_expiry).strftime('%Y-%m-%d at %I:%M:%S %p')))
@@ -250,6 +252,10 @@ def start():
 		else:
 			print("[E] Could not make required directories.\nPlease create a 'stories' folder manually.")
 			exit(1)
+		if (index + 1) != len(users_to_check):
+			print('-' * 70)
+			print('[I] ({}/{}) 5 second time-out until next user...'.format((index + 1), len(users_to_check)))
+			time.sleep(5)
 		print('-' * 70)
 
 	exit(0)
