@@ -8,9 +8,9 @@ import argparse
 import datetime
 
 try:
-    import urllib.request as urllib
+	import urllib.request as urllib
 except ImportError:
-    import urllib as urllib	
+	import urllib as urllib	
 
 try:
 	from instagram_private_api import (
@@ -157,7 +157,7 @@ def get_media_story(user_to_check, user_id, ig_client):
 		for media in feed_json:
 			if 'video_versions' in media:
 				list_video.append(media['video_versions'][0]['url'])
-			else:
+			if 'image_versions2' in media:
 				list_image.append(media['image_versions2']['candidates'][0]['url'])
 
 		for video in list_video:
