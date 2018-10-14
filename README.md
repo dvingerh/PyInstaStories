@@ -1,5 +1,5 @@
 # PyInstaStories
-CLI script to download Instagram stories from a single user or multiple users at once. Supports Python 2.7 and 3.5.
+Python script to download Instagram stories from a single user or multiple users at once. Supports Python 2.7 and 3.5.
 
 
 # How to use
