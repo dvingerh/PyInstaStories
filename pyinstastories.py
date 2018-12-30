@@ -134,7 +134,7 @@ def check_directories(user_to_check):
 		return False
 
 
-def get_media_story(user_to_check, user_id, ig_client):
+def get_media_story(user_to_check, user_id, ig_client, taken_at=False):
 	try:
 		try:
 			feed = ig_client.user_story_feed(user_id)
@@ -144,6 +144,7 @@ def get_media_story(user_to_check, user_id, ig_client):
 
 		try:
 			feed_json = feed['reel']['items']
+			open("feed_json.json", 'w').write(json.dumps(feed_json))
 		except TypeError as e:
 			print("[I] There are no recent stories to process for this user.")
 			return
@@ -156,18 +157,18 @@ def get_media_story(user_to_check, user_id, ig_client):
 
 		for media in feed_json:
 			if 'video_versions' in media:
-				list_video.append(media['video_versions'][0]['url'])
+				list_video.append([media['video_versions'][0]['url'], "" if not taken_at else "_" + str(media["taken_at"])])
 			if 'image_versions2' in media:
-				list_image.append(media['image_versions2']['candidates'][0]['url'])
+				list_image.append([media['image_versions2']['candidates'][0]['url'], "" if not taken_at else "_" + str(media["taken_at"])])
 
 		for video in list_video:
-			filename = video.split('/')[-1]
-			final_filename = filename.split('.')[0] + ".mp4"
+			filename = video[0].split('/')[-1]
+			final_filename = filename.split('.')[0] + "{}.mp4".format(video[1])
 			save_path =  os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
 			if not os.path.exists(save_path):
 				print ("[I] Downloading video: {:s}".format(final_filename))
 				try:
-					urllib.URLopener().retrieve(video, save_path)
+					urllib.URLopener().retrieve(video[0], save_path)
 					list_video_new.append(save_path)
 				except Exception as e:
 					print("[W] An error occurred: " + str(e))
@@ -176,13 +177,13 @@ def get_media_story(user_to_check, user_id, ig_client):
 				print("[I] Story already exists: {:s}".format(final_filename))
 
 		for image in list_image:
-			filename = (image.split('/')[-1]).split('?', 1)[0]
-			final_filename = filename.split('.')[0] + ".jpg"
+			filename = (image[0].split('/')[-1]).split('?', 1)[0]
+			final_filename = filename.split('.')[0]  + "{}.jpg".format(image[1])
 			save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
 			if not os.path.exists(save_path):
 				print ("[I] Downloading image: {:s}".format(final_filename))
 				try:
-					urllib.URLopener().retrieve(image, save_path)
+					urllib.URLopener().retrieve(image[0], save_path)
 					list_image_new.append(save_path)
 				except Exception as e:
 					print("[W] An error occurred: " + str(e))
@@ -214,6 +215,7 @@ def start():
 	parser.add_argument('-p', '--password',            dest='password', type=str, required=False, help="Instagram password to login with.")
 	parser.add_argument('-d', '--download', nargs='+', dest='download', type=str, required=False,  help="Instagram user to download stories from.")
 	parser.add_argument('-b,' '--batch-file', dest='batchfile', type=str, required=False, help="Read a text file of usernames to download stories from.")
+	parser.add_argument('-ta', '--taken-at', dest='takenat', action='store_true', help="Append the taken_at timestamp to the filename of downloaded items.")
 
 	# Workaround to 'disable' argument abbreviations
 	parser.add_argument('--usernamx', help=argparse.SUPPRESS, metavar='IGNORE')
@@ -267,7 +269,7 @@ def start():
 			try:
 				user_res = ig_client.username_info(user_to_check)
 				user_id = user_res['user']['pk']
-				get_media_story(user_to_check, user_id, ig_client)
+				get_media_story(user_to_check, user_id, ig_client, args.takenat)
 			except Exception as e:
 				print("[E] An error occurred: " + str(e))
 				exit(1)
