@@ -10,6 +10,8 @@ Available arguments are `--username`, `--password` and `--download`, but you can
 
 The `--download` argument supports multiple users, each user is seperated by a space.
 
+The `--batch-file` argument allows you to read usernames from a text file.
+
 Example: `python3 pyinstastories.py -d jacobsartorius justinbieber lilhankwilliams`
 
 ### Example
