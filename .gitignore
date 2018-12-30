@@ -6,3 +6,5 @@ __pycache__/
 stories/
 
 *.pyc
+
+users\.txt

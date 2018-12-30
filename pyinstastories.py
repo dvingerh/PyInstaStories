@@ -212,17 +212,40 @@ def start():
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-u', '--username',            dest='username', type=str, required=False, help="Instagram username to login with.")
 	parser.add_argument('-p', '--password',            dest='password', type=str, required=False, help="Instagram password to login with.")
-	parser.add_argument('-d', '--download', nargs='+', dest='download', type=str, required=True,  help="Instagram user to download stories from.")
+	parser.add_argument('-d', '--download', nargs='+', dest='download', type=str, required=False,  help="Instagram user to download stories from.")
+	parser.add_argument('-b,' '--batch-file', dest='batchfile', type=str, required=False, help="Read a text file of usernames to download stories from.")
 
 	# Workaround to 'disable' argument abbreviations
 	parser.add_argument('--usernamx', help=argparse.SUPPRESS, metavar='IGNORE')
 	parser.add_argument('--passworx', help=argparse.SUPPRESS, metavar='IGNORE')
 	parser.add_argument('--downloax', help=argparse.SUPPRESS, metavar='IGNORE')
+	parser.add_argument('--batch-filx', help=argparse.SUPPRESS, metavar='IGNORE')
 
 	args, unknown = parser.parse_known_args()
+	users_to_check = []
+	if args.download or args.batchfile:
+		if args.download:
+			users_to_check = args.download
+		else:
+			if os.path.isfile(args.batchfile):
+				users_to_check = [user.rstrip('\n') for user in open(args.batchfile)]
+				if not users_to_check:
+					print("[E] The specified file is empty.")
+					print("-" * 70)
+					sys.exit(1)
+				else:
+					print("[I] downloading {:d} users from batch file.".format(len(users_to_check)))
+					print("-" * 70)
+			else:
+				print('[E] The specified file does not exist.')
+				print("-" * 70)
+				sys.exit(1)
+	else:
+		print('[E] No usernames provided. Please use the -d or -b argument.')
+		print("-" * 70)
+		sys.exit(1)
 
-	if (args.username and args.password and args.download):
-		users_to_check = args.download
+	if (args.username and args.password):
 		ig_client = login(args.username, args.password)
 	else:
 		settings_file = "credentials.json"
@@ -231,7 +254,6 @@ def start():
 			print("[E] Please supply --username and --password arguments.")
 			exit(1)
 		else:
-			users_to_check = args.download
 			ig_client = login()
 
 	print("-" * 70)
@@ -250,7 +272,7 @@ def start():
 				print("[E] An error occurred: " + str(e))
 				exit(1)
 		else:
-			print("[E] Could not make required directories.\nPlease create a 'stories' folder manually.")
+			print("[E] Could not make required directories. Please create a 'stories' folder manually.")
 			exit(1)
 		if (index + 1) != len(users_to_check):
 			print('-' * 70)
