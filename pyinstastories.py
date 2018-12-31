@@ -156,15 +156,25 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False):
 		list_image_new = []
 
 		for media in feed_json:
+			if not taken_at:
+				taken_ts = None
+			elif media.get('imported_taken_at') and taken_at:
+				taken_ts = str(media.get('imported_taken_at', "")) + "*" + media.get('code', "")
+			elif media.get('taken_at') and taken_at:
+				taken_ts = str(media.get('taken_at', ""))
 			if 'video_versions' in media:
-				list_video.append([media['video_versions'][0]['url'], None if not taken_at else media["taken_at"]])
+				list_video.append([media['video_versions'][0]['url'], taken_ts])
 			if 'image_versions2' in media:
-				list_image.append([media['image_versions2']['candidates'][0]['url'], None if not taken_at else media["taken_at"]])
+				list_image.append([media['image_versions2']['candidates'][0]['url'], taken_ts])
 
 		for video in list_video:
 			filename = video[0].split('/')[-1]
+			try:
+				image_id = "_" + video[1].split('*')[1]
+			except:
+				image_id = ""
 			if taken_at:
-				final_filename = datetime.datetime.utcfromtimestamp(video[1]).strftime('%Y-%m-%d_%H-%M-%S') + ".mp4"
+				final_filename = datetime.datetime.utcfromtimestamp(int(video[1].split('*')[0])).strftime('%Y-%m-%d_%H-%M-%S') +"{}.mp4".format(image_id)
 			else:
 				final_filename = filename.split('.')[0] + ".mp4"
 			save_path =  os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
@@ -181,8 +191,12 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False):
 
 		for image in list_image:
 			filename = (image[0].split('/')[-1]).split('?', 1)[0]
+			try:
+				image_id = "_" + image[1].split('*')[1]
+			except:
+				image_id = ""
 			if taken_at:
-				final_filename = datetime.datetime.utcfromtimestamp(image[1]).strftime('%Y-%m-%d_%H-%M-%S') + ".jpg"
+				final_filename = datetime.datetime.utcfromtimestamp(int(image[1].split('*')[0])).strftime('%Y-%m-%d_%H-%M-%S') + "{}.jpg".format(image_id)
 			else:
 				final_filename = filename.split('.')[0] + ".jpg"
 			save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
