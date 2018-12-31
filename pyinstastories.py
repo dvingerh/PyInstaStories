@@ -157,13 +157,16 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False):
 
 		for media in feed_json:
 			if 'video_versions' in media:
-				list_video.append([media['video_versions'][0]['url'], "" if not taken_at else "_" + str(media["taken_at"])])
+				list_video.append([media['video_versions'][0]['url'], None if not taken_at else "_" + media["taken_at"]])
 			if 'image_versions2' in media:
-				list_image.append([media['image_versions2']['candidates'][0]['url'], "" if not taken_at else "_" + str(media["taken_at"])])
+				list_image.append([media['image_versions2']['candidates'][0]['url'], None if not taken_at else media["taken_at"]])
 
 		for video in list_video:
 			filename = video[0].split('/')[-1]
-			final_filename = filename.split('.')[0] + "{}.mp4".format(video[1])
+			if taken_at:
+				final_filename = datetime.datetime.utcfromtimestamp(video[1]).strftime('%Y-%m-%d_%H-%M-%S') + ".mp4"
+			else:
+				final_filename = filename.split('.')[0] + ".mp4"
 			save_path =  os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
 			if not os.path.exists(save_path):
 				print ("[I] Downloading video: {:s}".format(final_filename))
@@ -178,7 +181,10 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False):
 
 		for image in list_image:
 			filename = (image[0].split('/')[-1]).split('?', 1)[0]
-			final_filename = filename.split('.')[0]  + "{}.jpg".format(image[1])
+			if taken_at:
+				final_filename = datetime.datetime.utcfromtimestamp(image[1]).strftime('%Y-%m-%d_%H-%M-%S') + ".jpg"
+			else:
+				final_filename = filename.split('.')[0] + ".jpg"
 			save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
 			if not os.path.exists(save_path):
 				print ("[I] Downloading image: {:s}".format(final_filename))
