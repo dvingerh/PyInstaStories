@@ -157,7 +157,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False):
 
 		for media in feed_json:
 			if 'video_versions' in media:
-				list_video.append([media['video_versions'][0]['url'], None if not taken_at else "_" + media["taken_at"]])
+				list_video.append([media['video_versions'][0]['url'], None if not taken_at else media["taken_at"]])
 			if 'image_versions2' in media:
 				list_image.append([media['image_versions2']['candidates'][0]['url'], None if not taken_at else media["taken_at"]])
 
