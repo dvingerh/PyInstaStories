@@ -140,8 +140,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False):
 			feed = ig_client.user_story_feed(user_id)
 		except Exception as e:
 			print("[W] An error occurred: " + str(e))
-			exit(1)
-
+			return
 		try:
 			feed_json = feed['reel']['items']
 			open("feed_json.json", 'w').write(json.dumps(feed_json))
@@ -234,7 +233,7 @@ def start():
 	parser.add_argument('-u', '--username',            dest='username', type=str, required=False, help="Instagram username to login with.")
 	parser.add_argument('-p', '--password',            dest='password', type=str, required=False, help="Instagram password to login with.")
 	parser.add_argument('-d', '--download', nargs='+', dest='download', type=str, required=False,  help="Instagram user to download stories from.")
-	parser.add_argument('-b,' '--batch-file', dest='batchfile', type=str, required=False, help="Read a text file of usernames to download stories from.")
+	parser.add_argument('-b,', '--batch-file', dest='batchfile', type=str, required=False, help="Read a text file of usernames to download stories from.")
 	parser.add_argument('-ta', '--taken-at', dest='takenat', action='store_true', help="Append the taken_at timestamp to the filename of downloaded items.")
 
 	# Workaround to 'disable' argument abbreviations
@@ -292,7 +291,6 @@ def start():
 				get_media_story(user_to_check, user_id, ig_client, args.takenat)
 			except Exception as e:
 				print("[E] An error occurred: " + str(e))
-				exit(1)
 		else:
 			print("[E] Could not make required directories. Please create a 'stories' folder manually.")
 			exit(1)
