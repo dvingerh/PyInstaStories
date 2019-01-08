@@ -8,3 +8,5 @@ stories/
 *.pyc
 
 users\.txt
+
+\.idea/

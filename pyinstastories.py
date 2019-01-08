@@ -134,7 +134,7 @@ def check_directories(user_to_check):
 		return False
 
 
-def get_media_story(user_to_check, user_id, ig_client, taken_at=False):
+def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_thumbs=False):
 	try:
 		try:
 			feed = ig_client.user_story_feed(user_id)
@@ -161,10 +161,14 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False):
 				taken_ts = str(media.get('imported_taken_at', "")) + "*" + media.get('code', "")
 			elif media.get('taken_at') and taken_at:
 				taken_ts = str(media.get('taken_at', ""))
+
+			is_video = 'video_versions' in media and 'image_versions2' in media
+
 			if 'video_versions' in media:
 				list_video.append([media['video_versions'][0]['url'], taken_ts])
 			if 'image_versions2' in media:
-				list_image.append([media['image_versions2']['candidates'][0]['url'], taken_ts])
+				if (is_video and not no_video_thumbs) or not is_video:
+					list_image.append([media['image_versions2']['candidates'][0]['url'], taken_ts])
 
 		for video in list_video:
 			filename = video[0].split('/')[-1]
@@ -235,6 +239,7 @@ def start():
 	parser.add_argument('-d', '--download', nargs='+', dest='download', type=str, required=False,  help="Instagram user to download stories from.")
 	parser.add_argument('-b,', '--batch-file', dest='batchfile', type=str, required=False, help="Read a text file of usernames to download stories from.")
 	parser.add_argument('-ta', '--taken-at', dest='takenat', action='store_true', help="Append the taken_at timestamp to the filename of downloaded items.")
+	parser.add_argument('-nt', '--no-thumbs', dest='novideothumbs', action='store_true', help="Do not download video thumbnails.")
 
 	# Workaround to 'disable' argument abbreviations
 	parser.add_argument('--usernamx', help=argparse.SUPPRESS, metavar='IGNORE')
@@ -266,7 +271,7 @@ def start():
 		print("-" * 70)
 		sys.exit(1)
 
-	if (args.username and args.password):
+	if args.username and args.password:
 		ig_client = login(args.username, args.password)
 	else:
 		settings_file = "credentials.json"
@@ -288,7 +293,7 @@ def start():
 			try:
 				user_res = ig_client.username_info(user_to_check)
 				user_id = user_res['user']['pk']
-				get_media_story(user_to_check, user_id, ig_client, args.takenat)
+				get_media_story(user_to_check, user_id, ig_client, args.takenat, args.novideothumbs)
 			except Exception as e:
 				print("[E] An error occurred: " + str(e))
 		else:
