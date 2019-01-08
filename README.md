@@ -53,6 +53,6 @@ PYINSTASTORIES (SCRIPT V1.4 - PYTHON V3.6.3) - 01:16:38 AM
 [I] Downloading image: 38052809_2182358915374391_4548264508405055488_n.jpg
 [I] Downloading video: 38080828_530212454075962_3213326425847234560_n.mp4
 ----------------------------------------------------------------------
-[I] Story downloading ended with 6 new images and 1 new videos downloaded.
+[I] Story downloading ended with 4 new images and 3 new videos downloaded.
 ----------------------------------------------------------------------
 ```
