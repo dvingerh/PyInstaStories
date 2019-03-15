@@ -177,8 +177,12 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
             except:
                 image_id = ""
             if taken_at:
-                final_filename = datetime.datetime.utcfromtimestamp(int(video[1].split('*')[0])).strftime(
+                try:
+                    final_filename = datetime.datetime.utcfromtimestamp(int(video[1].split('*')[0])).strftime(
                     '%Y-%m-%d_%H-%M-%S') + "{}.mp4".format(image_id)
+                except:
+                    final_filename = filename.split('.')[0] + ".mp4"
+                    print("[E] Could not determine timestamp filename for this file, using default: ") + final_filename
             else:
                 final_filename = filename.split('.')[0] + ".mp4"
             save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
@@ -200,8 +204,12 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
             except:
                 image_id = ""
             if taken_at:
-                final_filename = datetime.datetime.utcfromtimestamp(int(image[1].split('*')[0])).strftime(
+                try:
+                    final_filename = datetime.datetime.utcfromtimestamp(int(image[1].split('*')[0])).strftime(
                     '%Y-%m-%d_%H-%M-%S') + "{}.jpg".format(image_id)
+                except:
+                    final_filename = filename.split('.')[0] + ".jpg"
+                    print("[E] Could not determine timestamp filename for this file, using default: ") + final_filename
             else:
                 final_filename = filename.split('.')[0] + ".jpg"
             save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
