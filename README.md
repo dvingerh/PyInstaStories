@@ -19,6 +19,8 @@ The `--taken-at` argument will, if used, have PyInstaStories save files with a d
 
 The `--no-thumbs` argument will, if used, have PyInstaStories skip downloadable video story thumbnail images.
 
+The `--hq-videos` argument will, if used, have PyInstaStories download higher quality video stories. Requires `ffmpeg`.
+
 ### Examples
 
 Download stories of 3 users.  
