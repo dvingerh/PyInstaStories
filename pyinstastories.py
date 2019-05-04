@@ -31,7 +31,7 @@ except ImportError:
 from instagram_private_api import ClientError
 from instagram_private_api import Client
 
-script_version = "2.0"
+script_version = "2.1"
 python_version = sys.version.split(' ')[0]
 
 
