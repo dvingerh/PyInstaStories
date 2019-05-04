@@ -160,8 +160,9 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
             else:
                 if media.get('imported_taken_at'):
                     taken_ts = datetime.datetime.utcfromtimestamp(media.get('taken_at', "")).strftime(
-                    '%Y-%m-%d_%H-%M-%S') + "__" + datetime.datetime.utcfromtimestamp(media.get('imported_taken_at', "")).strftime(
-                    '%Y-%m-%d_%H-%M-%S')
+                        '%Y-%m-%d_%H-%M-%S') + "__" + datetime.datetime.utcfromtimestamp(
+                        media.get('imported_taken_at', "")).strftime(
+                        '%Y-%m-%d_%H-%M-%S')
                 else:
                     taken_ts = datetime.datetime.utcfromtimestamp(media.get('taken_at', "")).strftime(
                         '%Y-%m-%d_%H-%M-%S')
