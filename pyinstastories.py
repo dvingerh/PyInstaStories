@@ -157,10 +157,15 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
         for media in feed_json:
             if not taken_at:
                 taken_ts = None
-            elif media.get('imported_taken_at') and taken_at:
-                taken_ts = str(media.get('imported_taken_at', "")) + "*" + media.get('code', "")
-            elif media.get('taken_at') and taken_at:
-                taken_ts = str(media.get('taken_at', ""))
+            else:
+                if media.get('imported_taken_at'):
+                    taken_ts = datetime.datetime.utcfromtimestamp(media.get('taken_at', "")).strftime(
+                        '%Y-%m-%d_%H-%M-%S') + "__" + datetime.datetime.utcfromtimestamp(
+                        media.get('imported_taken_at', "")).strftime(
+                        '%Y-%m-%d_%H-%M-%S')
+                else:
+                    taken_ts = datetime.datetime.utcfromtimestamp(media.get('taken_at', "")).strftime(
+                        '%Y-%m-%d_%H-%M-%S')
 
             is_video = 'video_versions' in media and 'image_versions2' in media
 
@@ -172,14 +177,9 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 
         for video in list_video:
             filename = video[0].split('/')[-1]
-            try:
-                image_id = "_" + video[1].split('*')[1]
-            except:
-                image_id = ""
             if taken_at:
                 try:
-                    final_filename = datetime.datetime.utcfromtimestamp(int(video[1].split('*')[0])).strftime(
-                    '%Y-%m-%d_%H-%M-%S') + "{}.mp4".format(image_id)
+                    final_filename = video[1] + ".mp4"
                 except:
                     final_filename = filename.split('.')[0] + ".mp4"
                     print("[E] Could not determine timestamp filename for this file, using default: ") + final_filename
@@ -199,14 +199,9 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 
         for image in list_image:
             filename = (image[0].split('/')[-1]).split('?', 1)[0]
-            try:
-                image_id = "_" + image[1].split('*')[1]
-            except:
-                image_id = ""
             if taken_at:
                 try:
-                    final_filename = datetime.datetime.utcfromtimestamp(int(image[1].split('*')[0])).strftime(
-                    '%Y-%m-%d_%H-%M-%S') + "{}.jpg".format(image_id)
+                    final_filename = image[1] + ".jpg"
                 except:
                     final_filename = filename.split('.')[0] + ".jpg"
                     print("[E] Could not determine timestamp filename for this file, using default: ") + final_filename
