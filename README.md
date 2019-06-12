@@ -19,7 +19,7 @@ The `--username` and `--password` arguments are required to generate a new cooki
 
 `--no-thumbs` — PyInstaStories will skip downloadable video story thumbnail images.
 
-`--hq-videos` — PyInstaStories will download higher quality video stories. Requires `ffmpeg`. Not stable right now.
+`--hq-videos` — PyInstaStories will download slightly higher quality video stories. Requires `ffmpeg`. Not stable right now.
 
 ### Examples
 
