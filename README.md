@@ -11,15 +11,15 @@ Make sure you have the following dependency installed: https://github.com/ping/i
 
 The `--username` and `--password` arguments are required to generate a new cookie file or when an existing cookie file has expired. You can omit these two arguments if there is a working login cookie file available already.
 
-The `--download` argument supports multiple users, each user is seperated by a space.
+`--download` — User(s) to download. Multiple users must be seperated by a space.
 
-The `--batch-file` argument allows you to read usernames from a text file.
+`--batch-file` — Download stories from usernames in a text file.
 
-The `--taken-at` argument will, if used, have PyInstaStories save files with a datetime format: `2019-01-07_22-51-43.jpg`
+`--taken-at` — PyInstaStories will save files with a datetime format: `2019-01-07_22-51-43.jpg`
 
-The `--no-thumbs` argument will, if used, have PyInstaStories skip downloadable video story thumbnail images.
+`--no-thumbs` — PyInstaStories will skip downloadable video story thumbnail images.
 
-The `--hq-videos` argument will, if used, have PyInstaStories download higher quality video stories. Requires `ffmpeg`.
+`--hq-videos` — PyInstaStories will download higher quality video stories. Requires `ffmpeg`. Not stable right now.
 
 ### Examples
 
