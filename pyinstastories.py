@@ -198,6 +198,8 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 
 
 		if hq_videos:
+			print("[I] Downloading video stories. ({:d} stories detected)".format(len(list_video_v)))
+			print('-' * 70)
 			for index, video in enumerate(list_video_v):
 				filename = video[0].split('/')[-1]
 				if taken_at:
@@ -212,7 +214,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 				save_path_audio = save_path_video.replace(".video.mp4", ".audio.mp4")
 				save_path_final = save_path_video.replace(".video.mp4", ".mp4")
 				if not os.path.exists(save_path_final):
-					print("[I] Downloading video: {:s}".format(final_filename))
+					print("[I] ({:d}/{:d}) Downloading video: {:s}".format(index+1, len(list_video_v), final_filename))
 					try:
 						urllib.urlretrieve(video[0], save_path_video)
 						urllib.urlretrieve(list_video_a[index], save_path_audio)
@@ -232,7 +234,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 							os.remove(save_path_audio)
 							return
 						else:
-							print('[I] Ffmpeg generated video: %s' % os.path.basename(save_path_final))
+							#print('[I] Ffmpeg generated video: %s' % os.path.basename(save_path_final))
 							os.remove(save_path_video)
 							os.remove(save_path_audio)
 							list_video_new.append(save_path_final)
@@ -243,7 +245,9 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 				else:
 					print("[I] Story already exists: {:s}".format(final_filename))
 		else:
-			for video in list_video:
+			print("[I] Downloading video stories. ({:d} stories detected)".format(len(list_video)))
+			print('-' * 70)
+			for index, video in enumerate(list_video):
 				filename = video[0].split('/')[-1]
 				if taken_at:
 					try:
@@ -255,7 +259,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 					final_filename = filename.split('.')[0] + ".mp4"
 				save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
 				if not os.path.exists(save_path):
-					print("[I] Downloading video: {:s}".format(final_filename))
+					print("[I] ({:d}/{:d}) Downloading video: {:s}".format(index+1, len(list_video), final_filename))
 					try:
 						urllib.urlretrieve(video[0], save_path)
 						list_video_new.append(save_path)
@@ -265,7 +269,10 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 				else:
 					print("[I] Story already exists: {:s}".format(final_filename))
 
-		for image in list_image:
+		print('-' * 70)
+		print("[I] Downloading image stories. ({:d} stories detected)".format(len(list_image)))
+		print('-' * 70)
+		for index, image in enumerate(list_image):
 			filename = (image[0].split('/')[-1]).split('?', 1)[0]
 			if taken_at:
 				try:
@@ -277,7 +284,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 				final_filename = filename.split('.')[0] + ".jpg"
 			save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
 			if not os.path.exists(save_path):
-				print("[I] Downloading image: {:s}".format(final_filename))
+				print("[I] ({:d}/{:d}) Downloading image: {:s}".format(index+1, len(list_image), final_filename))
 				try:
 					urllib.urlretrieve(image[0], save_path)
 					list_image_new.append(save_path)
