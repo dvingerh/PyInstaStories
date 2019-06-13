@@ -184,10 +184,18 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 			if 'video_versions' in media:
 				if hq_videos:
 					video_manifest = parseString(media['video_dash_manifest'])
+					# video_period = video_manifest.documentElement.getElementsByTagName('Period')
+					# video_representations = video_period[0].getElementsByTagName('Representation')
+					# video_url = video_representations.pop().getElementsByTagName('BaseURL')[0].childNodes[0].nodeValue
+					# audio_url = video_representations[0].getElementsByTagName('BaseURL')[0].childNodes[0].nodeValue
 					video_period = video_manifest.documentElement.getElementsByTagName('Period')
-					video_representations = video_period[0].getElementsByTagName('Representation')
-					video_url = video_representations.pop().getElementsByTagName('BaseURL')[0].childNodes[0].nodeValue
-					audio_url = video_representations[0].getElementsByTagName('BaseURL')[0].childNodes[0].nodeValue
+					representations = video_period[0].getElementsByTagName('Representation')
+					video_url = representations[0].getElementsByTagName('BaseURL')[0].childNodes[0].nodeValue
+					audio_element = representations.pop()
+					if audio_element.getAttribute("mimeType") == "audio/mp4":
+						audio_url = audio_element.getElementsByTagName('BaseURL')[0].childNodes[0].nodeValue
+					else:
+						audio_url = "noaudio"
 					list_video_v.append([video_url, taken_ts])
 					list_video_a.append(audio_url)
 				else:
@@ -217,26 +225,38 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 					print("[I] ({:d}/{:d}) Downloading video: {:s}".format(index+1, len(list_video_v), final_filename))
 					try:
 						urllib.urlretrieve(video[0], save_path_video)
-						urllib.urlretrieve(list_video_a[index], save_path_audio)
+						if list_video_a[index] == "noaudio":
+							has_audio = False
+						else:
+							has_audio = True
+							urllib.urlretrieve(list_video_a[index], save_path_audio)
 
 						ffmpeg_binary = os.getenv('FFMPEG_BINARY', 'ffmpeg')
-						cmd = [
-							ffmpeg_binary, '-loglevel', 'fatal', '-y',
-							'-i', save_path_video,
-							'-i', save_path_audio,
-							'-c:v', 'copy', '-c:a', 'copy', save_path_final]
+						if has_audio:
+							cmd = [
+								ffmpeg_binary, '-loglevel', 'fatal', '-y',
+								'-i', save_path_video,
+								'-i', save_path_audio,
+								'-c:v', 'copy', '-c:a', 'copy', save_path_final]
+						else:							
+							cmd = [
+								ffmpeg_binary, '-loglevel', 'fatal', '-y',
+								'-i', save_path_video,
+								'-c:v', 'copy', '-c:a', 'copy', save_path_final]
 						#fnull = open(os.devnull, 'w')
 						fnull = None
 						exit_code = subprocess.call(cmd, stdout=fnull, stderr=subprocess.STDOUT)
 						if exit_code != 0:
 							print("[W] FFmpeg exit code not '0' but '{:d}'.".format(exit_code))
 							os.remove(save_path_video)
-							os.remove(save_path_audio)
+							if has_audio:
+								os.remove(save_path_audio)
 							return
 						else:
 							#print('[I] Ffmpeg generated video: %s' % os.path.basename(save_path_final))
 							os.remove(save_path_video)
-							os.remove(save_path_audio)
+							if has_audio:
+								os.remove(save_path_audio)
 							list_video_new.append(save_path_final)
 
 					except Exception as e:
