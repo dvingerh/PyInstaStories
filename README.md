@@ -35,26 +35,34 @@ Download stories from a text file. Pass login username and password as arguments
 ##### Example terminal output
 
 ```
-> python3 pyinstastories.py -d jordynjones
+$ python3 pyinstastories.py --download justinbieber
 ----------------------------------------------------------------------
-PYINSTASTORIES (SCRIPT V1.4 - PYTHON V3.6.3) - 01:16:38 AM
+[I] PYINSTASTORIES (SCRIPT V2.1 - PYTHON V3.7.3) - 05:55:42 PM
 ----------------------------------------------------------------------
 [I] Using cached login cookie for "johndoe".
 [I] Login to "johndoe" OK!
-[I] Login cookie expiry date: 2018-08-18 at 04:40:56 PM
+[I] Login cookie expiry date: 2019-08-07 at 09:54:43 PM
 ----------------------------------------------------------------------
 [I] Files will be downloaded to C:\Users\User\Documents\Git\PyInstaStories
 ----------------------------------------------------------------------
-[I] Getting stories for user: jordynjones
+[I] Getting stories for: justinbieber
 ----------------------------------------------------------------------
-[I] Downloading video: 37813815_215083095840615_4630133302956493383_n.mp4
-[I] Downloading image: 38066226_439347253244259_7841321044982890496_n.jpg
-[I] Downloading image: 38541931_272408410204408_6934439177173860352_n.jpg
-[I] Downloading video: 38166262_230879184287581_2338295584533774336_n.mp4
-[I] Downloading image: 38752915_246521029518941_7519825270950330368_n.jpg
-[I] Downloading image: 38052809_2182358915374391_4548264508405055488_n.jpg
-[I] Downloading video: 38080828_530212454075962_3213326425847234560_n.mp4
+[I] Downloading video stories. (7 stories detected)
 ----------------------------------------------------------------------
-[I] Story downloading ended with 4 new images and 3 new videos downloaded.
+[I] (1/7) Downloading video: 41107421_150110362713394_6909049832863331499_n.mp4
+[I] (2/7) Downloading video: 40704767_352431668802214_7535329190798115834_n.mp4
+[I] (3/7) Downloading video: 32675407_899984993677896_5838612576283769538_n.mp4
+[I] (4/7) Downloading video: 27460743_1232788393557486_4163271676685655927_n.mp4
+[I] (5/7) Downloading video: 40991261_591854457989117_3573059593419810351_n.mp4
+[I] (6/7) Downloading video: 27449739_373199263333116_2195630862018446526_n.mp4
+[I] (7/7) Downloading video: 32786476_689302061513389_6323122299924594750_n.mp4
+----------------------------------------------------------------------
+[I] Downloading image stories. (3 stories detected)
+----------------------------------------------------------------------
+[I] (1/3) Downloading image: 61787819_1607274159404970_4836984492900662152_n.jpg
+[I] (2/3) Downloading image: 64505667_498208200986305_7034972402491620659_n.jpg
+[I] (3/3) Downloading image: 64264791_1350148401799309_7365462912390446749_n.jpg
+----------------------------------------------------------------------
+[I] Story downloading ended with 3 new images and 7 new videos downloaded.
 ----------------------------------------------------------------------
 ```
