@@ -445,8 +445,9 @@ def start():
 		except Exception as e:
 			print("[E] An error occurred: " + str(e))
 			print('-' * 70)
-			print('[I] ({}/{}) 5 second time-out until next user...'.format((index + 1), len(users_to_check)))
-			time.sleep(5)
+			if (index + 1) != len(users_to_check) and len(users_to_check) > 1:
+				print('[I] ({}/{}) 5 second time-out until next user...'.format((index + 1), len(users_to_check)))
+				time.sleep(5)
 		except KeyboardInterrupt:
 			print('-' * 70)
 			print("[I] The operation was aborted.")
