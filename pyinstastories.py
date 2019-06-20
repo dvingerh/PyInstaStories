@@ -224,12 +224,12 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 				if not os.path.exists(save_path_final):
 					print("[I] ({:d}/{:d}) Downloading video: {:s}".format(index+1, len(list_video_v), final_filename))
 					try:
-						urllib.urlretrieve(video[0], save_path_video)
+						download_file(video[0], save_path_video)
 						if list_video_a[index] == "noaudio":
 							has_audio = False
 						else:
 							has_audio = True
-							urllib.urlretrieve(list_video_a[index], save_path_audio)
+							download_file(list_video_a[index], save_path_audio)
 
 						ffmpeg_binary = os.getenv('FFMPEG_BINARY', 'ffmpeg')
 						if has_audio:
@@ -281,7 +281,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 				if not os.path.exists(save_path):
 					print("[I] ({:d}/{:d}) Downloading video: {:s}".format(index+1, len(list_video), final_filename))
 					try:
-						urllib.urlretrieve(video[0], save_path)
+						download_file(video[0], save_path)
 						list_video_new.append(save_path)
 					except Exception as e:
 						print("[W] An error occurred: " + str(e))
@@ -306,7 +306,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 			if not os.path.exists(save_path):
 				print("[I] ({:d}/{:d}) Downloading image: {:s}".format(index+1, len(list_image), final_filename))
 				try:
-					urllib.urlretrieve(image[0], save_path)
+					download_file(image[0], save_path)
 					list_image_new.append(save_path)
 				except Exception as e:
 					print("[W] An error occurred: " + str(e))
@@ -327,6 +327,18 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 	except KeyboardInterrupt as e:
 		print("[I] User aborted download.")
 		exit(1)
+
+def download_file(url, path, retry=False):
+	try:
+		urllib.urlretrieve(url, path)
+	except Exception:
+		if not retry:
+			print("[E] Download failed. Trying one more time.")
+			time.sleep(2)
+			download_file(url, path, True)
+		else:
+			print("[E] Download failed again, skipping file.")
+			print('-' * 70)
 
 def command_exists(command):
 	try:
