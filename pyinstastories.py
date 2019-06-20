@@ -418,6 +418,9 @@ def start():
 			print("[I] Getting stories for: {:s}".format(user_to_check))
 			print('-' * 70)
 			if check_directories(user_to_check):
+				follow_res = ig_client.friendships_show(user_id)
+				if follow_res.get("is_private") and not follow_res.get("following"):
+					raise Exception("You are not following this private user.")
 				get_media_story(user_to_check, user_id, ig_client, args.takenat, args.novideothumbs, args.hqvideos)
 			else:
 				print("[E] Could not make required directories. Please create a 'stories' folder manually.")
@@ -429,9 +432,13 @@ def start():
 			print('-' * 70)
 		except Exception as e:
 			print("[E] An error occurred: " + str(e))
+			print('-' * 70)
+			print('[I] ({}/{}) 5 second time-out until next user...'.format((index + 1), len(users_to_check)))
+			time.sleep(5)
 		except KeyboardInterrupt:
 			print('-' * 70)
 			print("[I] The operation was aborted.")
+			print('-' * 70)
 			exit(0)
 	exit(0)
 

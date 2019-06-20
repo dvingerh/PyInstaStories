@@ -10,3 +10,5 @@ stories/
 users\.txt
 
 \.idea/
+
+\.vscode/\.ropeproject/
