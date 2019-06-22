@@ -328,16 +328,17 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 		print("[I] User aborted download.")
 		exit(1)
 
-def download_file(url, path, retry=False):
+def download_file(url, path, attempt=0):
 	try:
 		urllib.urlretrieve(url, path)
 	except Exception:
-		if not retry:
-			print("[E] Download failed. Trying one more time.")
-			time.sleep(2)
-			download_file(url, path, True)
-		else:
-			print("[E] Download failed again, skipping file.")
+		if not attempt == 2:
+			attempt += 1
+			print("[E] Download failed ({:d}). Trying again in 10 seconds.".format(attempt))
+			time.sleep(10)
+			download_file(url, path, attempt)
+		else: 
+			print("[E] Download failed two times, skipping file.")
 			print('-' * 70)
 
 def command_exists(command):
