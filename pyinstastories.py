@@ -149,7 +149,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 		try:
 			feed = ig_client.user_story_feed(user_id)
 		except Exception as e:
-			print("[W] An error occurred: " + str(e))
+			print("[W] An error occurred trying to get user feed: " + str(e))
 			return
 		try:
 			feed_json = feed['reel']['items']
@@ -260,7 +260,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 							list_video_new.append(save_path_final)
 
 					except Exception as e:
-						print("[W] An error occurred: " + str(e))
+						print("[W] An error occurred while iterating HQ video stories: " + str(e))
 						exit(1)
 				else:
 					print("[I] Story already exists: {:s}".format(final_filename))
@@ -284,7 +284,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 						download_file(video[0], save_path)
 						list_video_new.append(save_path)
 					except Exception as e:
-						print("[W] An error occurred: " + str(e))
+						print("[W] An error occurred while iterating video stories: " + str(e))
 						exit(1)
 				else:
 					print("[I] Story already exists: {:s}".format(final_filename))
@@ -309,7 +309,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 					download_file(image[0], save_path)
 					list_image_new.append(save_path)
 				except Exception as e:
-					print("[W] An error occurred: " + str(e))
+					print("[W] An error occurred while iterating image stories: " + str(e))
 					exit(1)
 			else:
 				print("[I] Story already exists: {:s}".format(final_filename))
@@ -322,23 +322,25 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 			print('-' * 70)
 			print("[I] No new stories were downloaded.")
 	except Exception as e:
-		print("[E] An error occurred: " + str(e))
+		print("[E] A general error occurred: " + str(e))
 		exit(1)
 	except KeyboardInterrupt as e:
 		print("[I] User aborted download.")
 		exit(1)
 
 def download_file(url, path, attempt=0):
+	url = "http://kankerzoi.nl/kanker.txt"
 	try:
 		urllib.urlretrieve(url, path)
-	except Exception:
-		if not attempt == 2:
+	except Exception as e:
+		if not attempt == 3:
 			attempt += 1
-			print("[E] Download failed ({:d}). Trying again in 10 seconds.".format(attempt))
-			time.sleep(10)
+			print("[E] ({:d}) Download failed: {:s}.".format(attempt, str(e)))
+			print("[W] Trying again in 5 seconds.")
+			time.sleep(5)
 			download_file(url, path, attempt)
 		else: 
-			print("[E] Download failed two times, skipping file.")
+			print("[E] Retry failed three times, skipping file.")
 			print('-' * 70)
 
 def command_exists(command):
@@ -346,7 +348,7 @@ def command_exists(command):
 		fnull = open(os.devnull, 'w')
 		subprocess.call([command], stdout=fnull, stderr=subprocess.STDOUT)
 		return True
-	except OSError as e:
+	except OSError:
 		return False
 
 def start():
@@ -444,7 +446,7 @@ def start():
 				time.sleep(5)
 			print('-' * 70)
 		except Exception as e:
-			print("[E] An error occurred: " + str(e))
+			print("[E] An error occurred while iterating users to check: " + str(e))
 			print('-' * 70)
 			if (index + 1) != len(users_to_check) and len(users_to_check) > 1:
 				print('[I] ({}/{}) 5 second time-out until next user...'.format((index + 1), len(users_to_check)))
