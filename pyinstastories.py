@@ -329,7 +329,6 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 		exit(1)
 
 def download_file(url, path, attempt=0):
-	url = "http://kankerzoi.nl/kanker.txt"
 	try:
 		urllib.urlretrieve(url, path)
 	except Exception as e:
