@@ -417,25 +417,26 @@ def start():
 	print("[I] Files will be downloaded to {:s}".format(os.getcwd()))
 	print("-" * 70)
 
-	for index, user_to_check in enumerate(users_to_check):
+
+	def download_user(index, user, attempt=0):
 		try:
-			if not user_to_check.isdigit():
-				user_res = ig_client.username_info(user_to_check)
+			if not user.isdigit():
+				user_res = ig_client.username_info(user)
 				user_id = user_res['user']['pk']
 			else:
-				user_id = user_to_check
+				user_id = user
 				user_info = ig_client.user_info(user_id)
 				if not user_info.get("user", None):
 					raise Exception("No user is associated with the given user id.")
 				else:
-					user_to_check = user_info.get("user").get("username")
-			print("[I] Getting stories for: {:s}".format(user_to_check))
+					user = user_info.get("user").get("username")
+			print("[I] Getting stories for: {:s}".format(user))
 			print('-' * 70)
-			if check_directories(user_to_check):
+			if check_directories(user):
 				follow_res = ig_client.friendships_show(user_id)
 				if follow_res.get("is_private") and not follow_res.get("following"):
 					raise Exception("You are not following this private user.")
-				get_media_story(user_to_check, user_id, ig_client, args.takenat, args.novideothumbs, args.hqvideos)
+				get_media_story(user, user_id, ig_client, args.takenat, args.novideothumbs, args.hqvideos)
 			else:
 				print("[E] Could not make required directories. Please create a 'stories' folder manually.")
 				exit(1)
@@ -445,11 +446,20 @@ def start():
 				time.sleep(5)
 			print('-' * 70)
 		except Exception as e:
-			print("[E] An error occurred while iterating users to check: " + str(e))
-			print('-' * 70)
-			if (index + 1) != len(users_to_check) and len(users_to_check) > 1:
-				print('[I] ({}/{}) 5 second time-out until next user...'.format((index + 1), len(users_to_check)))
+			if not attempt == 3:
+				attempt += 1
+				print("[E] ({:d}) Download failed: {:s}.".format(attempt, str(e)))
+				print("[W] Trying again in 5 seconds.")
 				time.sleep(5)
+				print('-' * 70)
+				download_user(index, user, attempt)
+			else: 
+				print("[E] Retry failed three times, skipping user.")
+				print('-' * 70)
+
+	for index, user_to_check in enumerate(users_to_check):
+		try:
+			download_user(index, user_to_check)
 		except KeyboardInterrupt:
 			print('-' * 70)
 			print("[I] The operation was aborted.")
