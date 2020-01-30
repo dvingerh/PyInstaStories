@@ -331,6 +331,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 def download_file(url, path, attempt=0):
 	try:
 		urllib.urlretrieve(url, path)
+		urllib.urlcleanup()
 	except Exception as e:
 		if not attempt == 3:
 			attempt += 1
