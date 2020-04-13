@@ -171,9 +171,12 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 				taken_ts = None
 			else:
 				if media.get('imported_taken_at'):
+					imported_taken_at = media.get('imported_taken_at', "")
+					if imported_taken_at > 10000000000:
+						imported_taken_at /= 1000
 					taken_ts = datetime.datetime.utcfromtimestamp(media.get('taken_at', "")).strftime(
 						'%Y-%m-%d_%H-%M-%S') + "__" + datetime.datetime.utcfromtimestamp(
-						media.get('imported_taken_at', "")).strftime(
+						imported_taken_at).strftime(
 						'%Y-%m-%d_%H-%M-%S')
 				else:
 					taken_ts = datetime.datetime.utcfromtimestamp(media.get('taken_at', "")).strftime(
