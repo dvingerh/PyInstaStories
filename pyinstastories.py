@@ -34,6 +34,7 @@ from instagram_private_api import Client
 script_version = "2.6"
 python_version = sys.version.split(' ')[0]
 
+download_dest = None
 
 # Login
 
@@ -129,15 +130,18 @@ def login(username="", password=""):
 
 
 def check_directories(user_to_check):
+	global download_dest
 	try:
-		if not os.path.isdir(os.getcwd() + "/stories/{}/".format(user_to_check)):
-			os.makedirs(os.getcwd() + "/stories/{}/".format(user_to_check))
+		if not os.path.isdir(download_dest + "/stories/{}/".format(user_to_check)):
+			os.makedirs(download_dest + "/stories/{}/".format(user_to_check))
 		return True
-	except Exception:
+	except Exception as e:
+		print(str(e))
 		return False
 
 
 def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_thumbs=False, hq_videos=False):
+	global download_dest
 	if hq_videos and command_exists("ffmpeg"):
 		print("[I] Downloading high quality videos enabled. Ffmpeg will be used.")
 		print('-' * 70)
@@ -221,7 +225,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 						print("[E] Could not determine timestamp filename for this file, using default: ") + final_filename
 				else:
 					final_filename = filename.split('.')[0] + ".mp4"
-				save_path_video = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename.replace(".mp4", ".video.mp4")
+				save_path_video = download_dest + "/stories/{}/".format(user_to_check) + final_filename.replace(".mp4", ".video.mp4")
 				save_path_audio = save_path_video.replace(".video.mp4", ".audio.mp4")
 				save_path_final = save_path_video.replace(".video.mp4", ".mp4")
 				if not os.path.exists(save_path_final):
@@ -280,7 +284,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 						print("[E] Could not determine timestamp filename for this file, using default: ") + final_filename
 				else:
 					final_filename = filename.split('.')[0] + ".mp4"
-				save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
+				save_path = download_dest + "/stories/{}/".format(user_to_check) + final_filename
 				if not os.path.exists(save_path):
 					print("[I] ({:d}/{:d}) Downloading video: {:s}".format(index+1, len(list_video), final_filename))
 					try:
@@ -305,7 +309,7 @@ def get_media_story(user_to_check, user_id, ig_client, taken_at=False, no_video_
 					print("[E] Could not determine timestamp filename for this file, using default: ") + final_filename
 			else:
 				final_filename = filename.split('.')[0] + ".jpg"
-			save_path = os.getcwd() + "/stories/{}/".format(user_to_check) + final_filename
+			save_path = download_dest + "/stories/{}/".format(user_to_check) + final_filename
 			if not os.path.exists(save_path):
 				print("[I] ({:d}/{:d}) Downloading image: {:s}".format(index+1, len(list_image), final_filename))
 				try:
@@ -375,6 +379,7 @@ def start():
 						help="Do not download video thumbnails.")
 	parser.add_argument('-hqv', '--hq-videos', dest='hqvideos', action='store_true',
 						help="Get higher quality video stories. Requires Ffmpeg.")
+	parser.add_argument('-o', '--output', dest='output', type=str, required=False, help="Destination folder for downloads.")
 
 	# Workaround to 'disable' argument abbreviations
 	parser.add_argument('--usernamx', help=argparse.SUPPRESS, metavar='IGNORE')
@@ -418,7 +423,13 @@ def start():
 			ig_client = login()
 
 	print("-" * 70)
-	print("[I] Files will be downloaded to {:s}".format(os.getcwd()))
+	global download_dest
+	if os.path.isdir(args.output):
+		download_dest = args.output
+	else:
+		print("[W] Destination '{:s}' is invalid, falling back to default location.".format(args.output))
+		download_dest = os.getcwd()
+	print("[I] Files will be downloaded to {:s}".format(download_dest))
 	print("-" * 70)
 
 
