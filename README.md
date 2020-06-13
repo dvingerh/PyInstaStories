@@ -1,5 +1,5 @@
 # PyInstaStories
-![Version 2.5](https://img.shields.io/badge/Version-2.5-orange.svg)
+![Version 2.7](https://img.shields.io/badge/Version-2.5-orange.svg)
 ![Python 2.7, 3.5](https://img.shields.io/badge/Python-2.7%2C%203.5%2B-3776ab.svg)
 
 [![Support me!](https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png)](https://www.buymeacoffee.com/dvingerh)
@@ -19,6 +19,8 @@ The `--username` and `--password` arguments are required to generate a new cooki
 `--download` — User(s) to download. Multiple users must be seperated by a space.
 
 `--batch-file` — Download stories from usernames in a text file.
+
+`--output` — Destination folder for downloaded stories. If not passed PyInstaLive will take the current working directory as the destination folder.
 
 `--taken-at` — PyInstaStories will save files with a datetime format: `2019-01-07_22-51-43.jpg`
 
