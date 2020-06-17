@@ -34,7 +34,7 @@ from instagram_private_api import Client
 script_version = "2.6"
 python_version = sys.version.split(' ')[0]
 
-download_dest = None
+download_dest = os.getcwd()
 
 # Login
 
@@ -424,11 +424,12 @@ def start():
 
 	print("-" * 70)
 	global download_dest
-	if os.path.isdir(args.output):
-		download_dest = args.output
-	else:
-		print("[W] Destination '{:s}' is invalid, falling back to default location.".format(args.output))
-		download_dest = os.getcwd()
+	if args.output:
+		if os.path.isdir(args.output):
+			download_dest = args.output
+		else:
+			print("[W] Destination '{:s}' is invalid, falling back to default location.".format(args.output))
+			download_dest = os.getcwd()
 	print("[I] Files will be downloaded to {:s}".format(download_dest))
 	print("-" * 70)
 
